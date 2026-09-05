@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tasks | DevBoard
+{% endblock %}
+
+{% block content %}
+    
+    <section class="page-header">
+        <div>
+            <h1>Tasks</h1>
+            <p>Manage your development tasks</p>
+        </div>
+
+        <a href="{{ url_for('main.create_task') }}" class="button">
+            New Task
+        </a>
+    </section>
+
+    <section class="task-list">
+        {% if tasks %}
+            
+            {% for task in tasks %}
+                <article class="task-card">
+
+                    <div>
+                        <h3>{{ task['title'] }}</h3>
+
+                        {% if task['description'] %}
+                            <p>{{task['description']}}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="task-meta">
+                        <span>{{ task['priority'] }}</span>
+                        <span>{{ task['status'] }}</span>
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+            
+            <div class="empty-state">
+                <h3>No tasks yet</h3>
+                <p>Create your first task to get started</p>
+            </div>
+
+        {% endif %}
+    </section>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+New Task | DevBoard
+{% endblock %}
+
+{% block content %}
+
+<section class="form-container">
+
+    <div class="page-header">
+        <div>
+            <h2>Create Task</h2>
+            <p>Add a new task to your developer workspace.</p>
+        </div>
+    </div>
+
+    <!-- Post method is used for submitting -->
+    <form method="POST" class="task-form"> 
+
+        <div class="form-group">
+            <label for="title">Title</label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="e.g. Build task management feature"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+
+            <textarea
+                id="description"
+                name="description"
+                rows="5"
+                placeholder="Describe the task..."
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority</label>
+
+            <select id="priority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+
+        <button type="submit" class="button">
+            Create Task
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}
