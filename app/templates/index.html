@@ -23,7 +23,14 @@ DashBoard | DevBaord
 
     <div class="card">
         <h3>Tasks</h3>
-        <p>0 pending tasks</p>
+
+        <p>{{ pending_tasks }} pending</p>
+        <p>{{ completed_tasks }} completed</p>
+        <p>{{ total_tasks }} total</p>
+
+        <a href="{{ url_for('main.tasks') }}" class="card-link">
+            View tasks
+        </a>
     </div>
 
     <div class="card">
