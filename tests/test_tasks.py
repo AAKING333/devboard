@@ -127,3 +127,35 @@ def test_missing_task_returns_404(client):
     response = client.get("/tasks/999999/edit")
 
     assert response.status_code == 404
+    
+    
+
+def test_dashboard_task_statistics(client, app):
+    with app.app_context():
+        db = get_db()
+
+        db.execute(
+            """
+            INSERT INTO tasks (title, status)
+            VALUES (?, ?)
+            """,
+            ("Pending task", "pending"),
+        )
+
+        db.execute(
+            """
+            INSERT INTO tasks (title, status)
+            VALUES (?, ?)
+            """,
+            ("Completed task", "completed"),
+        )
+
+        db.commit()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+
+    assert b"1 pending" in response.data
+    assert b"1 completed" in response.data
+    assert b"2 total" in response.data

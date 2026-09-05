@@ -11,7 +11,37 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def home():
-    return render_template("index.html")
+    db = get_db()
+    
+    total_tasks = db.execute(
+        '''
+        Select COUNT(*)
+        From tasks
+        '''
+    ).fetchone()[0]
+    
+    pending_tasks = db.execute(
+        '''
+        Select COUNT(*)
+        From tasks
+        Where status == 'pending'
+        '''
+    ).fetchone()[0]
+    
+    completed_tasks = db.execute(
+            '''
+            Select COUNT(*)
+            From tasks
+            Where status == 'completed'
+            '''
+        ).fetchone()[0]
+    
+    return render_template(
+        "index.html",
+        total_tasks=total_tasks,
+        pending_tasks=pending_tasks,
+        completed_tasks=completed_tasks
+        )
 
 @main.route("/tasks")
 def tasks():
