@@ -149,3 +149,13 @@ main {
 
     font: inherit;
 }
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.task-actions form {
+    margin: 0;
+}

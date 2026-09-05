@@ -5,49 +5,72 @@ Tasks | DevBoard
 {% endblock %}
 
 {% block content %}
-    
-    <section class="page-header">
+
+<section class="page-header">
+    <div>
+        <h1>Tasks</h1>
+        <p>Manage your development tasks</p>
+    </div>
+
+    <a href="{{ url_for('main.create_task') }}" class="button">
+        New Task
+    </a>
+</section>
+
+<section class="task-list">
+    {% if tasks %}
+
+    {% for task in tasks %}
+    <article class="task-card">
+
         <div>
-            <h1>Tasks</h1>
-            <p>Manage your development tasks</p>
+            <h3>{{ task['title'] }}</h3>
+
+            {% if task['description'] %}
+            <p>{{task['description']}}</p>
+            {% endif %}
         </div>
 
-        <a href="{{ url_for('main.create_task') }}" class="button">
-            New Task
-        </a>
-    </section>
+        <div class="task-meta">
+            <span>{{ task['priority'] }}</span>
+            <span>{{ task['status'] }}</span>
+        </div>
 
-    <section class="task-list">
-        {% if tasks %}
-            
-            {% for task in tasks %}
-                <article class="task-card">
+        <div class="task-actions">
 
-                    <div>
-                        <h3>{{ task['title'] }}</h3>
+            <a href="{{ url_for('main.edit_task', task_id=task['id']) }}" class="button">
+                Edit
+            </a>
 
-                        {% if task['description'] %}
-                            <p>{{task['description']}}</p>
-                        {% endif %}
-                    </div>
+            {% if task["status"] != "completed" %}
 
-                    <div class="task-meta">
-                        <span>{{ task['priority'] }}</span>
-                        <span>{{ task['status'] }}</span>
-                    </div>
+            <form method="POST" action="{{ url_for('main.complete_task', task_id=task['id']) }}">
+                <button type="submit" class="button">
+                    Complete
+                </button>
+            </form>
 
-                </article>
+            {% endif %}
 
-            {% endfor %}
+            <form method="POST" action="{{ url_for('main.delete_task', task_id=task['id']) }}">
+                <button type="submit" class="button">
+                    Delete
+                </button>
+            </form>
+        </div>
 
-        {% else %}
-            
-            <div class="empty-state">
-                <h3>No tasks yet</h3>
-                <p>Create your first task to get started</p>
-            </div>
+    </article>
 
-        {% endif %}
-    </section>
+    {% endfor %}
+
+    {% else %}
+
+    <div class="empty-state">
+        <h3>No tasks yet</h3>
+        <p>Create your first task to get started</p>
+    </div>
+
+    {% endif %}
+</section>
 
 {% endblock %}
