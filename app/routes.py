@@ -194,3 +194,66 @@ def create_project():
             return redirect(url_for("main.projects"))
     
     return render_template("create_project.html")
+
+def get_project(project_id):
+    db = get_db()
+    
+    project = db.execute(
+        '''
+        SELECT * 
+        FROM projects
+        WHERE id = ?
+        ''',
+        (project_id,),
+    ).fetchone()
+    
+    if project is None:
+        abort(404)
+        
+    return project
+
+@main.route('/projects/<int:project_id>/edit', methods=("GET", "POST"))
+def edit_project(project_id):
+    project = get_project(project_id)
+    
+    if request.method == "POST":
+        name = request.form["name"].strip()
+        description = request.form["description"].strip()
+        status = request.form["status"]
+        
+        if name:
+            db = get_db()
+            
+            db.execute(
+                '''
+                    UPDATE projects
+                    SET name = ?, description = ?, status = ?
+                    WHERE id = ?
+                ''',
+                (name, description, status, project_id)
+            )
+            
+            db.commit()
+            
+            return redirect(url_for('main.projects'))
+    
+    return render_template(
+        'edit_project.html',
+        project=project,
+    )
+    
+
+@main.route("/projects/<int:project_id>/delete", methods=("POST",))
+def delete_project(project_id):
+    get_project(project_id)
+
+    db = get_db()
+
+    db.execute(
+        "DELETE FROM projects WHERE id = ?",
+        (project_id,),
+    )
+
+    db.commit()
+
+    return redirect(url_for("main.projects"))

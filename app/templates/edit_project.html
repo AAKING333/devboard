@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Project | DevBoard
+{% endblock %}
+
+{% block content %}
+
+<section class="form-container">
+
+    <div class="page-header">
+        <div>
+            <h2>Edit Project</h2>
+            <p>Update project details and status.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="project-form">
+
+        <div class="form-group">
+            <label for="name">Project Name</label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ project['name'] }}"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+
+            <textarea
+                id="description"
+                name="description"
+                rows="5"
+            >{{ project["description"] or "" }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+
+            <select id="status" name="status">
+                <option
+                    value="active"
+                    {% if project["status"] == "active" %}selected{% endif %}
+                >
+                    Active
+                </option>
+
+                <option
+                    value="completed"
+                    {% if project["status"] == "completed" %}selected{% endif %}
+                >
+                    Completed
+                </option>
+
+                <option
+                    value="paused"
+                    {% if project["status"] == "paused" %}selected{% endif %}
+                >
+                    Paused
+                </option>
+            </select>
+        </div>
+
+        <button type="submit" class="button">
+            Save Changes
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

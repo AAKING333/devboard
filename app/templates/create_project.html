@@ -1,43 +1,42 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    New Project | DevBoard
+New Project | DevBoard
 {% endblock %}
 
 
 {% block content %}
-    <section class="form-container">
-        <div class="page-header">
-            <div>
-                <h3>Create Project</h3>
-                <p>Add a new development project</p>
-            </div>
+<section class="form-container">
+    <div class="page-header">
+        <div>
+            <h3>Create Project</h3>
+            <p>Add a new development project</p>
+        </div>
+    </div>
+
+    <form method="POST" class="project-form">
+        <div class="form-group">
+            <label for="name">Project Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g. DevBoard" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea name="description" id="description" rows="5" placeholder="Describe the project..."></textarea>
         </div>
 
-        <form method="POST" class="project-form">
-            <div class="form-group">
-                <label for="name">Project Name</label>
-                <input 
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="e.g. DevBoard"
-                    required
-                >
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea 
-                name="description" 
-                id="description"
-                rows="5"
-                placeholder="Describe the project..."
-                ></textarea>
-            </div>
+        <div class="form-group">
+            <label for="priority">Priority</label>
 
-            <button type="submit" class="button">
-                Create Project
-            </button>
-        </form>
-    </section>
+            <select id="priority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+
+        <button type="submit" class="button">
+            Create Project
+        </button>
+    </form>
+</section>
 {% endblock %}
