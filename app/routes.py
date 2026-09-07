@@ -155,3 +155,42 @@ def delete_task(task_id):
     db.commit()
     
     return redirect(url_for('main.tasks'))
+
+
+@main.route('/projects')
+def projects():
+    db = get_db()
+    
+    projects = db.execute('''
+                            SELECT * 
+                            FROM projects
+                            ORDER BY created_at DESC
+                          ''').fetchall()
+    
+    return render_template(
+        "projects.html",
+        projects=projects,
+    )
+    
+@main.route('/projects/new', methods=('GET', 'POST'))
+def create_project():
+    if request.method == 'POST':
+        name = request.form["name"].strip()
+        description = request.form["description"].strip()
+        
+        if name:
+            db = get_db()
+            
+            db.execute(
+                '''
+                    InSERT INTO projects (name, description)
+                    VALUES (?, ?)
+                ''',
+                (name, description),
+            )
+            
+            db.commit()
+            
+            return redirect(url_for("main.projects"))
+    
+    return render_template("create_project.html")

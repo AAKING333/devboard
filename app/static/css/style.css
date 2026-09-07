@@ -167,3 +167,38 @@ main {
 .task-actions form {
     margin: 0;
 }
+
+.project-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.project-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    background: white;
+    padding: 1.25rem;
+    border-radius: 8px;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.project-meta {
+    display: flex;
+    align-items: center;
+}
+
+.project-meta span {
+    padding: 0.35rem 0.6rem;
+    background: #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.project-form {
+    display: grid;
+    gap: 1.25rem;
+}
