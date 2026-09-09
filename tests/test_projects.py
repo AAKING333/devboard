@@ -141,3 +141,16 @@ def test_dashboard_project_statistics(client, app):
     assert b"1 completed" in response.data
     assert b"1 paused" in response.data
     assert b"3 total" in response.data
+    
+def test_create_project_shows_success_message(client):
+    response = client.post(
+        "/projects/new",
+        data={
+            "name": "Flash Test Project",
+            "description": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Project created successfully." in response.data

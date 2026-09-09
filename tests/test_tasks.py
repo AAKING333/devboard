@@ -237,3 +237,18 @@ def test_deleting_project_unassigns_task(client, app):
 
         assert task is not None
         assert task["project_id"] is None
+
+def test_create_task_shows_success_message(client):
+    response = client.post(
+        "/tasks/new",
+        data={
+            "title": "Flash test task",
+            "description": "",
+            "priority": "medium",
+            "project_id": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Task created successfully." in response.data

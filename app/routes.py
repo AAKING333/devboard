@@ -3,7 +3,8 @@ from flask import (Blueprint,
                    render_template,
                    redirect,
                    request,
-                   url_for)
+                   url_for,
+                   flash)
 
 from app.database import get_db
 
@@ -136,6 +137,8 @@ def create_task():
 
             db.commit()
 
+            flash("Task created successfully.", "success")
+            
             return redirect(url_for("main.tasks"))
 
     return render_template(
@@ -203,7 +206,7 @@ def edit_task(task_id):
             )
 
             db.commit()
-
+            flash("Task updated successfully.", "success")
             return redirect(url_for("main.tasks"))
 
     return render_template(
@@ -222,12 +225,12 @@ def complete_task(task_id):
     db.execute(
         '''
         UPDATE tasks
-        SET status == 'completed'
-        WHERE id == ?
+        SET status = 'completed'
+        WHERE id = ?
         ''',
         (task_id,),
     )
-    
+    flash("Task marked as completed.", "success")
     db.commit()
     
     return redirect(url_for('main.tasks'))
@@ -240,13 +243,13 @@ def delete_task(task_id):
     db.execute(
         '''
         Delete from tasks 
-        Where id == ?
+        Where id = ?
         ''',
         (task_id,),
     )
     
     db.commit()
-    
+    flash("Task deleted successfully.", "error")
     return redirect(url_for('main.tasks'))
 
 
@@ -276,14 +279,14 @@ def create_project():
             
             db.execute(
                 '''
-                    InSERT INTO projects (name, description)
+                    INSERT INTO projects (name, description)
                     VALUES (?, ?)
                 ''',
                 (name, description),
             )
             
             db.commit()
-            
+            flash("Project created successfully.", "success")
             return redirect(url_for("main.projects"))
     
     return render_template("create_project.html")
@@ -327,7 +330,7 @@ def edit_project(project_id):
             )
             
             db.commit()
-            
+            flash("Project updated successfully.", "success")
             return redirect(url_for('main.projects'))
     
     return render_template(
@@ -348,5 +351,6 @@ def delete_project(project_id):
     )
 
     db.commit()
-
+    flash("Project deleted successfully.", "error")
+    
     return redirect(url_for("main.projects"))
