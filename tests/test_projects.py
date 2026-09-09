@@ -154,3 +154,57 @@ def test_create_project_shows_success_message(client):
 
     assert response.status_code == 200
     assert b"Project created successfully." in response.data
+    
+def test_create_project_rejects_empty_name(client, app):
+    response = client.post(
+        "/projects/new",
+        data={
+            "name": "",
+            "description": "Invalid project",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Project name is required." in response.data
+
+    with app.app_context():
+        project = get_db().execute(
+            "SELECT * FROM projects"
+        ).fetchone()
+
+        assert project is None
+
+
+def test_edit_project_rejects_invalid_status(client, app):
+    with app.app_context():
+        db = get_db()
+
+        cursor = db.execute(
+            "INSERT INTO projects (name) VALUES (?)",
+            ("Valid Project",),
+        )
+
+        db.commit()
+        project_id = cursor.lastrowid
+
+    response = client.post(
+        f"/projects/{project_id}/edit",
+        data={
+            "name": "Valid Project",
+            "description": "",
+            "status": "invalid-status",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Invalid project status." in response.data
+
+    with app.app_context():
+        project = get_db().execute(
+            "SELECT * FROM projects WHERE id = ?",
+            (project_id,),
+        ).fetchone()
+
+        assert project["status"] == "active"

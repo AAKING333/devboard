@@ -252,3 +252,53 @@ def test_create_task_shows_success_message(client):
 
     assert response.status_code == 200
     assert b"Task created successfully." in response.data
+    
+def test_create_task_rejects_empty_title(client, app):
+    response = client.post(
+        "/tasks/new",
+        data={
+            "title": "",
+            "description": "Invalid task",
+            "priority": "medium",
+            "project_id": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Task title is required." in response.data
+
+    with app.app_context():
+        task = get_db().execute(
+            "SELECT * FROM tasks"
+        ).fetchone()
+
+        assert task is None
+
+
+def test_create_task_rejects_invalid_priority(client, app):
+    response = client.post(
+        "/tasks/new",
+        data={
+            "title": "Bad priority task",
+            "description": "",
+            "priority": "extreme",
+            "project_id": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Invalid task priority." in response.data
+
+    with app.app_context():
+        task = get_db().execute(
+            """
+            SELECT *
+            FROM tasks
+            WHERE title = ?
+            """,
+            ("Bad priority task",),
+        ).fetchone()
+
+        assert task is None

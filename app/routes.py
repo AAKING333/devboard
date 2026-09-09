@@ -8,6 +8,9 @@ from flask import (Blueprint,
 
 from app.database import get_db
 
+ALLOWED_PRIORITIES = {"low", "medium", "high"}
+ALLOWED_PROJECT_STATUSES = {"active", "paused", "completed"}
+
 main = Blueprint("main", __name__)
 
 @main.route("/")
@@ -110,13 +113,18 @@ def create_task():
         title = request.form["title"].strip()
         description = request.form["description"].strip()
         priority = request.form["priority"]
-
         project_id = request.form.get("project_id")
 
-        if not project_id:
-            project_id = None
+        if not title:
+            flash("Task title is required.", "error")
 
-        if title:
+        elif priority not in ALLOWED_PRIORITIES:
+            flash("Invalid task priority.", "error")
+
+        else:
+            if not project_id:
+                project_id = None
+
             db.execute(
                 """
                 INSERT INTO tasks (
@@ -138,7 +146,7 @@ def create_task():
             db.commit()
 
             flash("Task created successfully.", "success")
-            
+
             return redirect(url_for("main.tasks"))
 
     return render_template(
@@ -185,7 +193,11 @@ def edit_task(task_id):
         if not project_id:
             project_id = None
 
-        if title:
+        if not title:
+            flash("Task title is required.", "error")
+        elif priority not in ALLOWED_PRIORITIES:
+            flash("Invalid task priority.", "error")
+        else:
             db.execute(
                 """
                 UPDATE tasks
@@ -274,7 +286,9 @@ def create_project():
         name = request.form["name"].strip()
         description = request.form["description"].strip()
         
-        if name:
+        if not name:
+            flash("Project name is required.", "error")
+        else:
             db = get_db()
             
             db.execute(
@@ -290,6 +304,7 @@ def create_project():
             return redirect(url_for("main.projects"))
     
     return render_template("create_project.html")
+
 
 def get_project(project_id):
     db = get_db()
@@ -317,7 +332,11 @@ def edit_project(project_id):
         description = request.form["description"].strip()
         status = request.form["status"]
         
-        if name:
+        if not name:
+            flash("Project name is required.", "error")
+        elif status not in ALLOWED_PROJECT_STATUSES:
+            flash("Invalid project status.", "error")
+        else:
             db = get_db()
             
             db.execute(
