@@ -159,3 +159,81 @@ def test_dashboard_task_statistics(client, app):
     assert b"1 pending" in response.data
     assert b"1 completed" in response.data
     assert b"2 total" in response.data
+    
+def test_create_task_with_project(client, app):
+    with app.app_context():
+        db = get_db()
+
+        cursor = db.execute(
+            """
+            INSERT INTO projects (name)
+            VALUES (?)
+            """,
+            ("DevBoard",),
+        )
+
+        db.commit()
+        project_id = cursor.lastrowid
+
+    response = client.post(
+        "/tasks/new",
+        data={
+            "title": "Relational task",
+            "description": "Belongs to DevBoard.",
+            "priority": "high",
+            "project_id": project_id,
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"DevBoard" in response.data
+
+    with app.app_context():
+        task = get_db().execute(
+            """
+            SELECT *
+            FROM tasks
+            WHERE title = ?
+            """,
+            ("Relational task",),
+        ).fetchone()
+
+        assert task["project_id"] == project_id
+        
+def test_deleting_project_unassigns_task(client, app):
+    with app.app_context():
+        db = get_db()
+
+        project_cursor = db.execute(
+            "INSERT INTO projects (name) VALUES (?)",
+            ("Temporary Project",),
+        )
+
+        project_id = project_cursor.lastrowid
+
+        task_cursor = db.execute(
+            """
+            INSERT INTO tasks (title, project_id)
+            VALUES (?, ?)
+            """,
+            ("Keep this task", project_id),
+        )
+
+        task_id = task_cursor.lastrowid
+
+        db.commit()
+
+    client.post(
+        f"/projects/{project_id}/delete",
+        follow_redirects=True,
+    )
+
+    with app.app_context():
+        task = get_db().execute(
+            "SELECT * FROM tasks WHERE id = ?",
+            (task_id,),
+        ).fetchone()
+
+        assert task is not None
+        assert task["project_id"] is None

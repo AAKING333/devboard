@@ -46,34 +46,73 @@ def home():
 @main.route("/tasks")
 def tasks():
     db = get_db()
-    tasks = db.execute("SELECT * FROM tasks ORDER BY created_at DESC").fetchall()
+    tasks = db.execute(
+    """
+    SELECT
+        tasks.*,
+        projects.name AS project_name
+
+    FROM tasks
+
+    LEFT JOIN projects
+        ON tasks.project_id = projects.id
+
+    ORDER BY tasks.created_at DESC
+    """
+    ).fetchall()
     return render_template("tasks.html", tasks=tasks)
+
 
 @main.route("/tasks/new", methods=("GET", "POST"))
 def create_task():
+    db = get_db()
+
+    projects = db.execute(
+        """
+        SELECT id, name
+        FROM projects
+        WHERE status = 'active'
+        ORDER BY name
+        """
+    ).fetchall()
+
     if request.method == "POST":
-        
-        title = request.form['title'].strip()
-        description = request.form['description'].strip()
-        priority = request.form['priority']
-        
+        title = request.form["title"].strip()
+        description = request.form["description"].strip()
+        priority = request.form["priority"]
+
+        project_id = request.form.get("project_id")
+
+        if not project_id:
+            project_id = None
+
         if title:
-            db = get_db()
-            
             db.execute(
-                '''
-                INSERT INTO tasks (title, description, priority)
-                VALUES (?, ?, ?)
-                ''',
-                
-                (title, description, priority)
+                """
+                INSERT INTO tasks (
+                    title,
+                    description,
+                    priority,
+                    project_id
+                )
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    title,
+                    description,
+                    priority,
+                    project_id,
+                ),
             )
-            
+
             db.commit()
-            
-            return redirect(url_for('main.tasks'))
-        
-    return render_template('create_task.html')
+
+            return redirect(url_for("main.tasks"))
+
+    return render_template(
+        "create_task.html",
+        projects=projects,
+    )
 
 
 def get_task(task_id):
@@ -93,21 +132,45 @@ def get_task(task_id):
 def edit_task(task_id):
     task = get_task(task_id)
 
+    db = get_db()
+
+    projects = db.execute(
+        """
+        SELECT id, name
+        FROM projects
+        WHERE status = 'active'
+        ORDER BY name
+        """
+    ).fetchall()
+
     if request.method == "POST":
         title = request.form["title"].strip()
         description = request.form["description"].strip()
         priority = request.form["priority"]
 
-        if title:
-            db = get_db()
+        project_id = request.form.get("project_id")
 
+        if not project_id:
+            project_id = None
+
+        if title:
             db.execute(
                 """
                 UPDATE tasks
-                SET title = ?, description = ?, priority = ?
+                SET
+                    title = ?,
+                    description = ?,
+                    priority = ?,
+                    project_id = ?
                 WHERE id = ?
                 """,
-                (title, description, priority, task_id),
+                (
+                    title,
+                    description,
+                    priority,
+                    project_id,
+                    task_id,
+                ),
             )
 
             db.commit()
@@ -117,6 +180,7 @@ def edit_task(task_id):
     return render_template(
         "edit_task.html",
         task=task,
+        projects=projects,
     )
     
     
