@@ -12,36 +12,65 @@ main = Blueprint("main", __name__)
 @main.route("/")
 def home():
     db = get_db()
-    
+
     total_tasks = db.execute(
-        '''
-        Select COUNT(*)
-        From tasks
-        '''
+        "SELECT COUNT(*) FROM tasks"
     ).fetchone()[0]
-    
+
     pending_tasks = db.execute(
-        '''
-        Select COUNT(*)
-        From tasks
-        Where status == 'pending'
-        '''
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE status = 'pending'
+        """
     ).fetchone()[0]
-    
+
     completed_tasks = db.execute(
-            '''
-            Select COUNT(*)
-            From tasks
-            Where status == 'completed'
-            '''
-        ).fetchone()[0]
-    
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE status = 'completed'
+        """
+    ).fetchone()[0]
+
+    total_projects = db.execute(
+        "SELECT COUNT(*) FROM projects"
+    ).fetchone()[0]
+
+    active_projects = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM projects
+        WHERE status = 'active'
+        """
+    ).fetchone()[0]
+
+    completed_projects = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM projects
+        WHERE status = 'completed'
+        """
+    ).fetchone()[0]
+
+    paused_projects = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM projects
+        WHERE status = 'paused'
+        """
+    ).fetchone()[0]
+
     return render_template(
         "index.html",
         total_tasks=total_tasks,
         pending_tasks=pending_tasks,
-        completed_tasks=completed_tasks
-        )
+        completed_tasks=completed_tasks,
+        total_projects=total_projects,
+        active_projects=active_projects,
+        completed_projects=completed_projects,
+        paused_projects=paused_projects,
+    )
 
 @main.route("/tasks")
 def tasks():

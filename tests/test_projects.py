@@ -103,3 +103,41 @@ def test_missing_project_returns_404(client):
     response = client.get("/projects/999999/edit")
 
     assert response.status_code == 404
+    
+def test_dashboard_project_statistics(client, app):
+    with app.app_context():
+        db = get_db()
+
+        db.execute(
+            """
+            INSERT INTO projects (name, status)
+            VALUES (?, ?)
+            """,
+            ("Active Project", "active"),
+        )
+
+        db.execute(
+            """
+            INSERT INTO projects (name, status)
+            VALUES (?, ?)
+            """,
+            ("Completed Project", "completed"),
+        )
+
+        db.execute(
+            """
+            INSERT INTO projects (name, status)
+            VALUES (?, ?)
+            """,
+            ("Paused Project", "paused"),
+        )
+
+        db.commit()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"1 active" in response.data
+    assert b"1 completed" in response.data
+    assert b"1 paused" in response.data
+    assert b"3 total" in response.data
