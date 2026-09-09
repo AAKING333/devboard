@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Projects | DevBoard
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-header">
+    <div>
+        <h2>Projects</h2>
+        <p>Manage your development projects.</p>
+    </div>
+    <a href="{{ url_for('main.create_project') }}" class="button">
+        New Project
+    </a>
+</section>
+
+<section class="project-list">
+    {% if projects %}
+
+    {% for project in projects %}
+    <article class="project-card">
+        <div>
+            <h3>{{ project['name'] }}</h3>
+            {% if project['description'] %}
+            <p>{{project['description']}}</p>
+            {% endif %}
+        </div>
+
+        <div class="project-meta">
+            <span>{{ project['status'] }}</span>
+        </div>
+
+        <div class="project-actions">
+
+            <a href="{{ url_for('main.edit_project', project_id=project['id']) }}" class="button">
+                Edit
+            </a>
+
+            <form method="POST" action="{{ url_for('main.delete_project', project_id=project['id']) }}">
+                <button type="submit" class="button">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+    </article>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty-state">
+        <h3>No projects yet</h3>
+        <p>Create your first development project</p>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

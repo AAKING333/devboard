@@ -18,7 +18,15 @@ DashBoard | DevBaord
 
     <div class="card">
         <h3>Projects</h3>
-        <p>0 active projects</p>
+
+        <p>{{ active_projects }} active</p>
+        <p>{{ completed_projects }} completed</p>
+        <p>{{ paused_projects }} paused</p>
+        <p>{{ total_projects }} total</p>
+
+        <a href="{{ url_for('main.projects') }}" class="card-link">
+            View projects
+        </a>
     </div>
 
     <div class="card">

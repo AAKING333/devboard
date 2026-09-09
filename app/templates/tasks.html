@@ -34,6 +34,16 @@ Tasks | DevBoard
         <div class="task-meta">
             <span>{{ task['priority'] }}</span>
             <span>{{ task['status'] }}</span>
+
+            {% if task["project_name"] %}
+            <span>
+                {{ task["project_name"] }}
+            </span>
+            {% else %}
+            <span>
+                No Project
+            </span>
+            {% endif %}
         </div>
 
         <div class="task-actions">

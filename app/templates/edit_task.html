@@ -20,23 +20,13 @@ Edit Task | DevBoard
         <div class="form-group">
             <label for="title">Title</label>
 
-            <input
-                type="text"
-                id="title"
-                name="title"
-                value="{{ task['title'] }}"
-                required
-            >
+            <input type="text" id="title" name="title" value="{{ task['title'] }}" required>
         </div>
 
         <div class="form-group">
             <label for="description">Description</label>
 
-            <textarea
-                id="description"
-                name="description"
-                rows="5"
-            >{{ task["description"] or "" }}</textarea>
+            <textarea id="description" name="description" rows="5">{{ task["description"] or "" }}</textarea>
         </div>
 
         <div class="form-group">
@@ -44,26 +34,37 @@ Edit Task | DevBoard
 
             <select id="priority" name="priority">
 
-                <option
-                    value="low"
-                    {% if task["priority"] == "low" %}selected{% endif %}
-                >
+                <option value="low" {% if task["priority"]=="low" %}selected{% endif %}>
                     Low
                 </option>
 
-                <option
-                    value="medium"
-                    {% if task["priority"] == "medium" %}selected{% endif %}
-                >
+                <option value="medium" {% if task["priority"]=="medium" %}selected{% endif %}>
                     Medium
                 </option>
 
-                <option
-                    value="high"
-                    {% if task["priority"] == "high" %}selected{% endif %}
-                >
+                <option value="high" {% if task["priority"]=="high" %}selected{% endif %}>
                     High
                 </option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="project_id">Project</label>
+
+            <select id="project_id" name="project_id">
+
+                <option value="">
+                    No Project
+                </option>
+
+                {% for project in projects %}
+
+                <option value="{{ project['id'] }}" {% if task["project_id"]==project["id"] %} selected {% endif %}>
+                    {{ project["name"] }}
+                </option>
+
+                {% endfor %}
 
             </select>
         </div>
