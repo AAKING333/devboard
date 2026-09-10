@@ -266,3 +266,13 @@ main {
     display: grid;
     gap: 1.25rem;
 }
+
+.learning-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.learning-actions form {
+    margin: 0;
+}

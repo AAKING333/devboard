@@ -466,3 +466,100 @@ def create_learning_entry():
             return redirect(url_for("main.learning"))
 
     return render_template("create_learning_entry.html")
+
+def get_learning_entry(entry_id):
+    entry = get_db().execute(
+        "SELECT * FROM learning_entries WHERE id = ?",
+        (entry_id,),
+    ).fetchone()
+
+    if entry is None:
+        abort(404)
+
+    return entry
+
+@main.route("/learning/<int:entry_id>/edit", methods=("GET", "POST"))
+def edit_learning_entry(entry_id):
+    entry = get_learning_entry(entry_id)
+
+    if request.method == "POST":
+        topic = request.form["topic"].strip()
+        category = request.form["category"].strip()
+        notes = request.form["notes"].strip()
+
+        try:
+            progress = int(request.form["progress"])
+        except ValueError:
+            progress = -1
+
+        status = request.form["status"]
+
+        if not topic:
+            flash("Learning topic is required.", "error")
+
+        elif progress < 0 or progress > 100:
+            flash("Progress must be between 0 and 100.", "error")
+
+        elif status not in {
+            "not_started",
+            "in_progress",
+            "completed",
+        }:
+            flash("Invalid learning status.", "error")
+
+        elif status == "completed" and progress != 100:
+            flash("Completed entries must have 100% progress.", "error")
+
+        elif status == "not_started" and progress != 0:
+            flash("Not started entries must have 0% progress.", "error")
+
+        else:
+            db = get_db()
+
+            db.execute(
+                """
+                UPDATE learning_entries
+                SET topic = ?,
+                    category = ?,
+                    progress = ?,
+                    status = ?,
+                    notes = ?
+                WHERE id = ?
+                """,
+                (
+                    topic,
+                    category,
+                    progress,
+                    status,
+                    notes,
+                    entry_id,
+                ),
+            )
+
+            db.commit()
+
+            flash("Learning entry updated successfully.", "success")
+
+            return redirect(url_for("main.learning"))
+
+    return render_template(
+        "edit_learning_entry.html",
+        entry=entry,
+    )
+    
+@main.route("/learning/<int:entry_id>/delete", methods=("POST",))
+def delete_learning_entry(entry_id):
+    get_learning_entry(entry_id)
+
+    db = get_db()
+
+    db.execute(
+        "DELETE FROM learning_entries WHERE id = ?",
+        (entry_id,),
+    )
+
+    db.commit()
+
+    flash("Learning entry deleted successfully.", "success")
+
+    return redirect(url_for("main.learning"))

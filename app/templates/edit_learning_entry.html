@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Learning Entry | DevBoard
+{% endblock %}
+
+{% block content %}
+
+<section class="form-container">
+
+    <div class="page-header">
+        <div>
+            <h2>Edit Learning Entry</h2>
+            <p>Update your learning progress.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="learning-form">
+
+        <div class="form-group">
+            <label for="topic">Topic</label>
+            <input
+                type="text"
+                id="topic"
+                name="topic"
+                value="{{ entry['topic'] }}"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input
+                type="text"
+                id="category"
+                name="category"
+                value="{{ entry['category'] or '' }}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="progress">Progress (%)</label>
+            <input
+                type="number"
+                id="progress"
+                name="progress"
+                min="0"
+                max="100"
+                value="{{ entry['progress'] }}"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+
+            <select id="status" name="status">
+                <option
+                    value="not_started"
+                    {% if entry["status"] == "not_started" %}selected{% endif %}
+                >
+                    Not Started
+                </option>
+
+                <option
+                    value="in_progress"
+                    {% if entry["status"] == "in_progress" %}selected{% endif %}
+                >
+                    In Progress
+                </option>
+
+                <option
+                    value="completed"
+                    {% if entry["status"] == "completed" %}selected{% endif %}
+                >
+                    Completed
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Notes</label>
+
+            <textarea
+                id="notes"
+                name="notes"
+                rows="5"
+            >{{ entry["notes"] or "" }}</textarea>
+        </div>
+
+        <button type="submit" class="button">
+            Save Changes
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

@@ -13,10 +13,7 @@ Learning | DevBoard
         <p>Track topics, skills, and learning progress.</p>
     </div>
 
-    <a
-        href="{{ url_for('main.create_learning_entry') }}"
-        class="button"
-    >
+    <a href="{{ url_for('main.create_learning_entry') }}" class="button">
         New Learning Entry
     </a>
 
@@ -27,40 +24,55 @@ Learning | DevBoard
 
     {% if entries %}
 
-        {% for entry in entries %}
+    {% for entry in entries %}
 
-            <article class="learning-card">
+    <article class="learning-card">
 
-                <div>
-                    <h3>{{ entry["topic"] }}</h3>
+        <div>
+            <h3>{{ entry["topic"] }}</h3>
 
-                    {% if entry["category"] %}
-                        <p>{{ entry["category"] }}</p>
-                    {% endif %}
-                </div>
+            {% if entry["category"] %}
+            <p>{{ entry["category"] }}</p>
+            {% endif %}
+        </div>
 
-                <div class="learning-meta">
+        <div class="learning-meta">
 
-                    <span>
-                        {{ entry["progress"] }}%
-                    </span>
+            <span>
+                {{ entry["progress"] }}%
+            </span>
 
-                    <span>
-                        {{ entry["status"] }}
-                    </span>
+            <span>
+                {{ entry["status"] }}
+            </span>
 
-                </div>
+        </div>
 
-            </article>
+        <div class="learning-actions">
 
-        {% endfor %}
+            <a href="{{ url_for('main.edit_learning_entry', entry_id=entry['id']) }}" class="button">
+                Edit
+            </a>
+
+            <form method="POST" action="{{ url_for('main.delete_learning_entry', entry_id=entry['id']) }}"
+                onsubmit="return confirm('Delete this learning entry?');">
+                <button type="submit" class="button">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+
+    </article>
+
+    {% endfor %}
 
     {% else %}
 
-        <div class="empty-state">
-            <h3>No learning entries yet</h3>
-            <p>Add something you are currently learning.</p>
-        </div>
+    <div class="empty-state">
+        <h3>No learning entries yet</h3>
+        <p>Add something you are currently learning.</p>
+    </div>
 
     {% endif %}
 
