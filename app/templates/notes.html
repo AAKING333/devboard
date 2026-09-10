@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notes | DevBoard
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+        <h2>Notes</h2>
+        <p>Keep development notes and useful references.</p>
+    </div>
+
+    <a href="{{ url_for('main.create_note') }}" class="button">
+        New Note
+    </a>
+
+</section>
+
+<section class="notes-list">
+
+    {% if notes %}
+
+        {% for note in notes %}
+
+            <article class="note-card">
+
+                <h3>{{ note["title"] }}</h3>
+
+                {% if note["category"] %}
+                    <span class="note-category">
+                        {{ note["category"] }}
+                    </span>
+                {% endif %}
+
+                <p>{{ note["content"] }}</p>
+
+            </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-state">
+            <h3>No notes yet</h3>
+            <p>Create your first development note.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

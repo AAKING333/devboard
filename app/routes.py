@@ -599,3 +599,54 @@ def delete_learning_entry(entry_id):
     flash("Learning entry deleted successfully.", "success")
 
     return redirect(url_for("main.learning"))
+
+
+@main.route("/notes")
+def notes():
+    db = get_db()
+
+    notes = db.execute(
+        """
+        SELECT *
+        FROM notes
+        ORDER BY updated_at DESC
+        """
+    ).fetchall()
+
+    return render_template(
+        "notes.html",
+        notes=notes,
+    )
+
+
+@main.route("/notes/new", methods=("GET", "POST"))
+def create_note():
+    if request.method == "POST":
+        title = request.form["title"].strip()
+        content = request.form["content"].strip()
+        category = request.form["category"].strip()
+
+        if not title:
+            flash("Note title is required.", "error")
+
+        elif not content:
+            flash("Note content is required.", "error")
+
+        else:
+            db = get_db()
+
+            db.execute(
+                """
+                INSERT INTO notes (title, content, category)
+                VALUES (?, ?, ?)
+                """,
+                (title, content, category),
+            )
+
+            db.commit()
+
+            flash("Note created successfully.", "success")
+
+            return redirect(url_for("main.notes"))
+
+    return render_template("create_note.html")

@@ -276,3 +276,34 @@ main {
 .learning-actions form {
     margin: 0;
 }
+
+.notes-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.note-card {
+    padding: 1.25rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.note-card p {
+    white-space: pre-wrap;
+}
+
+.note-category {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    background: #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.note-form {
+    display: grid;
+    gap: 1.25rem;
+}
