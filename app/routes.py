@@ -64,6 +64,33 @@ def home():
         WHERE status = 'paused'
         """
     ).fetchone()[0]
+    
+    total_learning = db.execute(
+        "SELECT COUNT(*) FROM learning_entries"
+    ).fetchone()[0]
+
+    in_progress_learning = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM learning_entries
+        WHERE status = 'in_progress'
+        """
+    ).fetchone()[0]
+
+    completed_learning = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM learning_entries
+        WHERE status = 'completed'
+        """
+    ).fetchone()[0]
+
+    average_progress = db.execute(
+        """
+        SELECT COALESCE(AVG(progress), 0)
+        FROM learning_entries
+        """
+    ).fetchone()[0]
 
     return render_template(
         "index.html",
@@ -74,6 +101,10 @@ def home():
         active_projects=active_projects,
         completed_projects=completed_projects,
         paused_projects=paused_projects,
+        total_learning=total_learning,
+        in_progress_learning=in_progress_learning,
+        completed_learning=completed_learning,
+        average_progress=round(average_progress),
     )
 
 @main.route("/tasks")
@@ -432,6 +463,11 @@ def create_learning_entry():
             "completed",
         }:
             flash("Invalid learning status.", "error")
+        
+        elif status == "completed" and progress != 100:
+            flash("Completed entries must have 100% progress.", "error")
+        elif status == "not_started" and progress != 0:
+            flash("Not started entries must have 0% progress.", "error")
 
         else:
             db = get_db()

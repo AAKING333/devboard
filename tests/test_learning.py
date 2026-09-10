@@ -179,3 +179,35 @@ def test_learning_rejects_completed_without_full_progress(client):
     )
     assert response.status_code == 200
     assert b"Completed entries must have 100% progress." in response.data
+    
+def test_dashboard_learning_statistics(client, app):
+    with app.app_context():
+        db = get_db()
+
+        db.execute(
+            """
+            INSERT INTO learning_entries
+            (topic, progress, status)
+            VALUES (?, ?, ?)
+            """,
+            ("Flask", 50, "in_progress"),
+        )
+
+        db.execute(
+            """
+            INSERT INTO learning_entries
+            (topic, progress, status)
+            VALUES (?, ?, ?)
+            """,
+            ("Git", 100, "completed"),
+        )
+
+        db.commit()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"1 in progress" in response.data
+    assert b"1 completed" in response.data
+    assert b"2 total" in response.data
+    assert b"75% average progress" in response.data
