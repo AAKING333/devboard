@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notes | DevBoard
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+        <h2>Notes</h2>
+        <p>Keep development notes and useful references.</p>
+    </div>
+
+    <a href="{{ url_for('main.create_note') }}" class="button">
+        New Note
+    </a>
+
+</section>
+
+<section class="notes-list">
+
+    {% if notes %}
+
+    {% for note in notes %}
+
+    <article class="note-card">
+
+        <h3>{{ note["title"] }}</h3>
+
+        {% if note["category"] %}
+        <span class="note-category">
+            {{ note["category"] }}
+        </span>
+        {% endif %}
+
+        <p>{{ note["content"] }}</p>
+
+        <small>
+            Updated: {{ note["updated_at"] }}
+        </small>
+        <div class="note-actions">
+
+            <a href="{{ url_for('main.edit_note', note_id=note['id']) }}" class="button">
+                Edit
+            </a>
+
+            <form method="POST" action="{{ url_for('main.delete_note', note_id=note['id']) }}"
+                onsubmit="return confirm('Delete this note?');">
+                <button type="submit" class="button">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+
+    </article>
+
+    {% endfor %}
+
+    {% else %}
+
+    <div class="empty-state">
+        <h3>No notes yet</h3>
+        <p>Create your first development note.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

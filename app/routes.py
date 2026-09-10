@@ -91,6 +91,10 @@ def home():
         FROM learning_entries
         """
     ).fetchone()[0]
+    
+    total_notes = db.execute(
+    "SELECT COUNT(*) FROM notes"
+    ).fetchone()[0]
 
     return render_template(
         "index.html",
@@ -105,6 +109,7 @@ def home():
         in_progress_learning=in_progress_learning,
         completed_learning=completed_learning,
         average_progress=round(average_progress),
+        total_notes=total_notes,
     )
 
 @main.route("/tasks")
@@ -599,3 +604,124 @@ def delete_learning_entry(entry_id):
     flash("Learning entry deleted successfully.", "success")
 
     return redirect(url_for("main.learning"))
+
+
+@main.route("/notes")
+def notes():
+    db = get_db()
+
+    notes = db.execute(
+        """
+        SELECT *
+        FROM notes
+        ORDER BY updated_at DESC
+        """
+    ).fetchall()
+
+    return render_template(
+        "notes.html",
+        notes=notes,
+    )
+
+
+@main.route("/notes/new", methods=("GET", "POST"))
+def create_note():
+    if request.method == "POST":
+        title = request.form["title"].strip()
+        content = request.form["content"].strip()
+        category = request.form["category"].strip()
+
+        if not title:
+            flash("Note title is required.", "error")
+
+        elif not content:
+            flash("Note content is required.", "error")
+
+        else:
+            db = get_db()
+
+            db.execute(
+                """
+                INSERT INTO notes (title, content, category)
+                VALUES (?, ?, ?)
+                """,
+                (title, content, category),
+            )
+
+            db.commit()
+
+            flash("Note created successfully.", "success")
+
+            return redirect(url_for("main.notes"))
+
+    return render_template("create_note.html")
+
+def get_note(note_id):
+    note = get_db().execute(
+        "SELECT * FROM notes WHERE id = ?",
+        (note_id,),
+    ).fetchone()
+
+    if note is None:
+        abort(404)
+
+    return note
+
+@main.route("/notes/<int:note_id>/edit", methods=("GET", "POST"))
+def edit_note(note_id):
+    note = get_note(note_id)
+
+    if request.method == "POST":
+        title = request.form["title"].strip()
+        category = request.form["category"].strip()
+        content = request.form["content"].strip()
+
+        if not title:
+            flash("Note title is required.", "error")
+
+        elif not content:
+            flash("Note content is required.", "error")
+
+        else:
+            db = get_db()
+
+            db.execute(
+                """
+                UPDATE notes
+                SET title = ?,
+                    category = ?,
+                    content = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                """,
+                (title, category, content, note_id),
+            )
+
+            db.commit()
+
+            flash("Note updated successfully.", "success")
+
+            return redirect(url_for("main.notes"))
+
+    return render_template(
+        "edit_note.html",
+        note=note,
+    )
+
+
+@main.route("/notes/<int:note_id>/delete", methods=("POST",))
+def delete_note(note_id):
+    get_note(note_id)
+
+    db = get_db()
+
+    db.execute(
+        "DELETE FROM notes WHERE id = ?",
+        (note_id,),
+    )
+
+    db.commit()
+
+    flash("Note deleted successfully.", "success")
+
+    return redirect(url_for("main.notes"))
