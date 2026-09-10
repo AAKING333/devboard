@@ -232,3 +232,37 @@ main {
     background: #fee2e2;
     border: 1px solid #fca5a5;
 }
+
+.learning-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.learning-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.learning-meta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.learning-meta span {
+    padding: 0.35rem 0.6rem;
+    background: #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.learning-form {
+    display: grid;
+    gap: 1.25rem;
+}

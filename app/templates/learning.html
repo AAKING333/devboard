@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+Learning | DevBoard
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+        <h2>Learning Tracker</h2>
+        <p>Track topics, skills, and learning progress.</p>
+    </div>
+
+    <a
+        href="{{ url_for('main.create_learning_entry') }}"
+        class="button"
+    >
+        New Learning Entry
+    </a>
+
+</section>
+
+
+<section class="learning-list">
+
+    {% if entries %}
+
+        {% for entry in entries %}
+
+            <article class="learning-card">
+
+                <div>
+                    <h3>{{ entry["topic"] }}</h3>
+
+                    {% if entry["category"] %}
+                        <p>{{ entry["category"] }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="learning-meta">
+
+                    <span>
+                        {{ entry["progress"] }}%
+                    </span>
+
+                    <span>
+                        {{ entry["status"] }}
+                    </span>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-state">
+            <h3>No learning entries yet</h3>
+            <p>Add something you are currently learning.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

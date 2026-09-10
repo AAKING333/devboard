@@ -388,3 +388,81 @@ def delete_project(project_id):
     flash("Project deleted successfully.", "error")
     
     return redirect(url_for("main.projects"))
+
+@main.route('/learning')
+def learning():
+    db = get_db()
+    
+    entries = db.execute(
+        '''
+        SELECT * 
+        FROM learning_entries
+        ORDER BY created_at DESC
+        '''
+    ).fetchall()
+    
+    return render_template(
+        'learning.html',
+        entries=entries
+    )
+    
+@main.route("/learning/new", methods=("GET", "POST"))
+def create_learning_entry():
+    if request.method == "POST":
+        topic = request.form["topic"].strip()
+        category = request.form["category"].strip()
+        notes = request.form["notes"].strip()
+
+        try:
+            progress = int(request.form["progress"])
+        except ValueError:
+            progress = -1
+
+        status = request.form["status"]
+
+        if not topic:
+            flash("Learning topic is required.", "error")
+
+        elif progress < 0 or progress > 100:
+            flash("Progress must be between 0 and 100.", "error")
+
+        elif status not in {
+            "not_started",
+            "in_progress",
+            "completed",
+        }:
+            flash("Invalid learning status.", "error")
+
+        else:
+            db = get_db()
+
+            db.execute(
+                """
+                INSERT INTO learning_entries (
+                    topic,
+                    category,
+                    progress,
+                    status,
+                    notes
+                )
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    topic,
+                    category,
+                    progress,
+                    status,
+                    notes,
+                ),
+            )
+
+            db.commit()
+
+            flash(
+                "Learning entry created successfully.",
+                "success",
+            )
+
+            return redirect(url_for("main.learning"))
+
+    return render_template("create_learning_entry.html")
