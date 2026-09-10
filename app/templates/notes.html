@@ -23,30 +23,48 @@ Notes | DevBoard
 
     {% if notes %}
 
-        {% for note in notes %}
+    {% for note in notes %}
 
-            <article class="note-card">
+    <article class="note-card">
 
-                <h3>{{ note["title"] }}</h3>
+        <h3>{{ note["title"] }}</h3>
 
-                {% if note["category"] %}
-                    <span class="note-category">
-                        {{ note["category"] }}
-                    </span>
-                {% endif %}
+        {% if note["category"] %}
+        <span class="note-category">
+            {{ note["category"] }}
+        </span>
+        {% endif %}
 
-                <p>{{ note["content"] }}</p>
+        <p>{{ note["content"] }}</p>
 
-            </article>
+        <small>
+            Updated: {{ note["updated_at"] }}
+        </small>
+        <div class="note-actions">
 
-        {% endfor %}
+            <a href="{{ url_for('main.edit_note', note_id=note['id']) }}" class="button">
+                Edit
+            </a>
+
+            <form method="POST" action="{{ url_for('main.delete_note', note_id=note['id']) }}"
+                onsubmit="return confirm('Delete this note?');">
+                <button type="submit" class="button">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+
+    </article>
+
+    {% endfor %}
 
     {% else %}
 
-        <div class="empty-state">
-            <h3>No notes yet</h3>
-            <p>Create your first development note.</p>
-        </div>
+    <div class="empty-state">
+        <h3>No notes yet</h3>
+        <p>Create your first development note.</p>
+    </div>
 
     {% endif %}
 

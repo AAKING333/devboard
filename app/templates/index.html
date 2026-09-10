@@ -56,7 +56,12 @@ DashBoard | DevBaord
 
     <div class="card">
         <h3>Notes</h3>
-        <p>No notes created yet</p>
+
+        <p>{{ total_notes }} saved</p>
+
+        <a href="{{ url_for('main.notes') }}" class="card-link">
+            View notes
+        </a>
     </div>
 
 </section>
