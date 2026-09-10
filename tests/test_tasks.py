@@ -302,3 +302,30 @@ def test_create_task_rejects_invalid_priority(client, app):
         ).fetchone()
 
         assert task is None
+        
+def test_create_task_rejects_invalid_project(client, app):
+    response = client.post(
+        "/tasks/new",
+        data={
+            "title": "Invalid project task",
+            "description": "",
+            "priority": "medium",
+            "project_id": "999999",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Selected project does not exist." in response.data
+
+    with app.app_context():
+        task = get_db().execute(
+            """
+            SELECT *
+            FROM tasks
+            WHERE title = ?
+            """,
+            ("Invalid project task",),
+        ).fetchone()
+
+        assert task is None

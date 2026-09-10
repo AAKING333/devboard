@@ -95,6 +95,16 @@ def tasks():
     ).fetchall()
     return render_template("tasks.html", tasks=tasks)
 
+def project_exists(project_id):
+    if project_id is None:
+        return True
+
+    project = get_db().execute(
+        "SELECT id FROM projects WHERE id = ?",
+        (project_id,),
+    ).fetchone()
+
+    return project is not None
 
 @main.route("/tasks/new", methods=("GET", "POST"))
 def create_task():
@@ -125,29 +135,32 @@ def create_task():
             if not project_id:
                 project_id = None
 
-            db.execute(
-                """
-                INSERT INTO tasks (
-                    title,
-                    description,
-                    priority,
-                    project_id
+            if not project_exists(project_id):
+                flash("Selected project does not exist.", "error")
+            else:
+                db.execute(
+                    """
+                    INSERT INTO tasks (
+                        title,
+                        description,
+                        priority,
+                        project_id
+                    )
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (
+                        title,
+                        description,
+                        priority,
+                        project_id,
+                    ),
                 )
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    title,
-                    description,
-                    priority,
-                    project_id,
-                ),
-            )
 
-            db.commit()
+                db.commit()
 
-            flash("Task created successfully.", "success")
+                flash("Task created successfully.", "success")
 
-            return redirect(url_for("main.tasks"))
+                return redirect(url_for("main.tasks"))
 
     return render_template(
         "create_task.html",
@@ -197,6 +210,8 @@ def edit_task(task_id):
             flash("Task title is required.", "error")
         elif priority not in ALLOWED_PRIORITIES:
             flash("Invalid task priority.", "error")
+        elif not project_exists(project_id):
+            flash("Selected project does not exist.", "error")
         else:
             db.execute(
                 """

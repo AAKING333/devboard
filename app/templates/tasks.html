@@ -62,7 +62,11 @@ Tasks | DevBoard
 
             {% endif %}
 
-            <form method="POST" action="{{ url_for('main.delete_task', task_id=task['id']) }}">
+            <form 
+                method="POST" 
+                action="{{ url_for('main.delete_task', task_id=task['id']) }}"
+                onsubmit="return confirm('Delete this task ?');"
+            >
                 <button type="submit" class="button">
                     Delete
                 </button>
