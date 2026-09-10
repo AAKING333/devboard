@@ -43,7 +43,15 @@ DashBoard | DevBaord
 
     <div class="card">
         <h3>Learning</h3>
-        <p>No skills tracked yet</p>
+
+        <p>{{ in_progress_learning }} in progress</p>
+        <p>{{ completed_learning }} completed</p>
+        <p>{{ total_learning }} total</p>
+        <p>{{ average_progress }}% average progress</p>
+
+        <a href="{{ url_for('main.learning') }}" class="card-link">
+            View learning
+        </a>
     </div>
 
     <div class="card">
