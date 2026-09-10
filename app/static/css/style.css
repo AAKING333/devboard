@@ -212,3 +212,23 @@ main {
 .project-actions form {
     margin: 0;
 }   
+
+.flash-container {
+    margin-bottom: 1rem;
+}
+
+.flash-message {
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+}
+
+.flash-success {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+}
+
+.flash-error {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+}

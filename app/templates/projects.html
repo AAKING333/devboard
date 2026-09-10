@@ -39,7 +39,11 @@ Projects | DevBoard
                 Edit
             </a>
 
-            <form method="POST" action="{{ url_for('main.delete_project', project_id=project['id']) }}">
+            <form 
+                method="POST" 
+                action="{{ url_for('main.delete_project', project_id=project['id']) }}"
+                onsubmit="return confirm('Delete this project ? Tasks assigned to it will be unassigned.')"
+                >
                 <button type="submit" class="button">
                     Delete
                 </button>

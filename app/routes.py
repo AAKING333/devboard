@@ -3,9 +3,13 @@ from flask import (Blueprint,
                    render_template,
                    redirect,
                    request,
-                   url_for)
+                   url_for,
+                   flash)
 
 from app.database import get_db
+
+ALLOWED_PRIORITIES = {"low", "medium", "high"}
+ALLOWED_PROJECT_STATUSES = {"active", "paused", "completed"}
 
 main = Blueprint("main", __name__)
 
@@ -91,6 +95,16 @@ def tasks():
     ).fetchall()
     return render_template("tasks.html", tasks=tasks)
 
+def project_exists(project_id):
+    if project_id is None:
+        return True
+
+    project = get_db().execute(
+        "SELECT id FROM projects WHERE id = ?",
+        (project_id,),
+    ).fetchone()
+
+    return project is not None
 
 @main.route("/tasks/new", methods=("GET", "POST"))
 def create_task():
@@ -109,34 +123,44 @@ def create_task():
         title = request.form["title"].strip()
         description = request.form["description"].strip()
         priority = request.form["priority"]
-
         project_id = request.form.get("project_id")
 
-        if not project_id:
-            project_id = None
+        if not title:
+            flash("Task title is required.", "error")
 
-        if title:
-            db.execute(
-                """
-                INSERT INTO tasks (
-                    title,
-                    description,
-                    priority,
-                    project_id
+        elif priority not in ALLOWED_PRIORITIES:
+            flash("Invalid task priority.", "error")
+
+        else:
+            if not project_id:
+                project_id = None
+
+            if not project_exists(project_id):
+                flash("Selected project does not exist.", "error")
+            else:
+                db.execute(
+                    """
+                    INSERT INTO tasks (
+                        title,
+                        description,
+                        priority,
+                        project_id
+                    )
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (
+                        title,
+                        description,
+                        priority,
+                        project_id,
+                    ),
                 )
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    title,
-                    description,
-                    priority,
-                    project_id,
-                ),
-            )
 
-            db.commit()
+                db.commit()
 
-            return redirect(url_for("main.tasks"))
+                flash("Task created successfully.", "success")
+
+                return redirect(url_for("main.tasks"))
 
     return render_template(
         "create_task.html",
@@ -182,7 +206,13 @@ def edit_task(task_id):
         if not project_id:
             project_id = None
 
-        if title:
+        if not title:
+            flash("Task title is required.", "error")
+        elif priority not in ALLOWED_PRIORITIES:
+            flash("Invalid task priority.", "error")
+        elif not project_exists(project_id):
+            flash("Selected project does not exist.", "error")
+        else:
             db.execute(
                 """
                 UPDATE tasks
@@ -203,7 +233,7 @@ def edit_task(task_id):
             )
 
             db.commit()
-
+            flash("Task updated successfully.", "success")
             return redirect(url_for("main.tasks"))
 
     return render_template(
@@ -222,12 +252,12 @@ def complete_task(task_id):
     db.execute(
         '''
         UPDATE tasks
-        SET status == 'completed'
-        WHERE id == ?
+        SET status = 'completed'
+        WHERE id = ?
         ''',
         (task_id,),
     )
-    
+    flash("Task marked as completed.", "success")
     db.commit()
     
     return redirect(url_for('main.tasks'))
@@ -240,13 +270,13 @@ def delete_task(task_id):
     db.execute(
         '''
         Delete from tasks 
-        Where id == ?
+        Where id = ?
         ''',
         (task_id,),
     )
     
     db.commit()
-    
+    flash("Task deleted successfully.", "error")
     return redirect(url_for('main.tasks'))
 
 
@@ -271,22 +301,25 @@ def create_project():
         name = request.form["name"].strip()
         description = request.form["description"].strip()
         
-        if name:
+        if not name:
+            flash("Project name is required.", "error")
+        else:
             db = get_db()
             
             db.execute(
                 '''
-                    InSERT INTO projects (name, description)
+                    INSERT INTO projects (name, description)
                     VALUES (?, ?)
                 ''',
                 (name, description),
             )
             
             db.commit()
-            
+            flash("Project created successfully.", "success")
             return redirect(url_for("main.projects"))
     
     return render_template("create_project.html")
+
 
 def get_project(project_id):
     db = get_db()
@@ -314,7 +347,11 @@ def edit_project(project_id):
         description = request.form["description"].strip()
         status = request.form["status"]
         
-        if name:
+        if not name:
+            flash("Project name is required.", "error")
+        elif status not in ALLOWED_PROJECT_STATUSES:
+            flash("Invalid project status.", "error")
+        else:
             db = get_db()
             
             db.execute(
@@ -327,7 +364,7 @@ def edit_project(project_id):
             )
             
             db.commit()
-            
+            flash("Project updated successfully.", "success")
             return redirect(url_for('main.projects'))
     
     return render_template(
@@ -348,5 +385,6 @@ def delete_project(project_id):
     )
 
     db.commit()
-
+    flash("Project deleted successfully.", "error")
+    
     return redirect(url_for("main.projects"))
