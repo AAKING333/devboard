@@ -75,9 +75,22 @@ DashBoard | DevBaord
             <p>Distribution of pending and completed tasks.</p>
         </div>
 
+        {% if total_tasks > 0 %}
+
         <div class="chart-container">
             <canvas id="taskStatusChart"></canvas>
         </div>
+
+        {% else %}
+
+        <div class="chart-empty">
+            <p>No task data yet.</p>
+            <a href="{{ url_for('main.create_task') }}">
+                Create your first task
+            </a>
+        </div>
+
+        {% endif %}
 
     </div>
 
@@ -88,9 +101,22 @@ DashBoard | DevBaord
             <p>Distribution of active, paused, and completed projects.</p>
         </div>
 
+        {% if total_projects > 0 %}
+
         <div class="chart-container">
             <canvas id="projectStatusChart"></canvas>
         </div>
+
+        {% else %}
+
+        <div class="chart-empty">
+            <p>No project data yet.</p>
+            <a href="{{ url_for('main.create_project') }}">
+                Create your first project
+            </a>
+        </div>
+
+        {% endif %}
 
     </div>
 
@@ -101,9 +127,22 @@ DashBoard | DevBaord
             <p>Current learning tracker overview.</p>
         </div>
 
+        {% if total_learning > 0 %}
+
         <div class="chart-container">
             <canvas id="learningProgressChart"></canvas>
         </div>
+
+        {% else %}
+
+        <div class="chart-empty">
+            <p>No learning data yet.</p>
+            <a href="{{ url_for('main.create_learning_entry') }}">
+                Add your first learning entry
+            </a>
+        </div>
+
+        {% endif %}
 
     </div>
 
@@ -117,128 +156,136 @@ DashBoard | DevBaord
         document.getElementById("taskStatusChart");
     const projectChartElement =
         document.getElementById("projectStatusChart");
-     const learningChartElement =
+    const learningChartElement =
         document.getElementById("learningProgressChart");
 
 
     const pendingCount = Number("{{ pending_tasks }}");
     const completedCount = Number("{{ completed_tasks }}");
 
-    new Chart(taskChartElement, {
-        type: "doughnut",
+    if (taskChartElement) {
+        new Chart(taskChartElement, {
+            type: "doughnut",
 
-        data: {
-            labels: [
-                "Pending",
-                "Completed"
-            ],
+            data: {
+                labels: [
+                    "Pending",
+                    "Completed"
+                ],
 
-            datasets: [
-                {
-                    data: [
-                        pendingCount,
-                        completedCount
-                    ]
-                }
-            ]
-        },
+                datasets: [
+                    {
+                        data: [
+                            pendingCount,
+                            completedCount
+                        ]
+                    }
+                ]
+            },
 
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-            plugins: {
-                legend: {
-                    position: "bottom"
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
 
     const activeP = Number("{{ active_projects }}")
     const pauseP = Number("{{ paused_projects }}")
     const completeP = Number("{{ completed_projects }}")
 
-    new Chart(projectChartElement, {
-        type: "doughnut",
+    if (projectChartElement) {
+        new Chart(projectChartElement, {
+            type: "doughnut",
 
-        data: {
-            labels: [
-                "Active",
-                "Paused",
-                "Completed"
-            ],
+            data: {
+                labels: [
+                    "Active",
+                    "Paused",
+                    "Completed"
+                ],
 
-            datasets: [
-                {
-                    data: [
-                        activeP,
-                        pauseP,
-                        completeP
-                    ]
-                }
-            ]
-        },
+                datasets: [
+                    {
+                        data: [
+                            activeP,
+                            pauseP,
+                            completeP
+                        ]
+                    }
+                ]
+            },
 
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-            plugins: {
-                legend: {
-                    position: "bottom"
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
 
     const in_progress_l = Number("{{ in_progress_learning }}")
     const completed_l = Number("{{ completed_learning }}")
     const total_l = Number("{{ total_learning }}")
-new Chart(learningChartElement, {
-        type: "bar",
 
-        data: {
-            labels: [
-                "In Progress",
-                "Completed",
-                "Total"
-            ],
+    if (learningChartElement) {
+        new Chart(learningChartElement, {
+            type: "bar",
 
-            datasets: [
-                {
-                    label: "Learning Entries",
+            data: {
+                labels: [
+                    "In Progress",
+                    "Completed",
+                    "Total"
+                ],
 
-                    data: [
-                        in_progress_l,
-                        completed_l,
-                        total_l
-                    ]
-                }
-            ]
-        },
+                datasets: [
+                    {
+                        label: "Learning Entries",
 
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
+                        data: [
+                            in_progress_l,
+                            completed_l,
+                            total_l
+                        ]
                     }
-                }
+                ]
             },
 
-            plugins: {
-                legend: {
-                    display: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
-        }
-    });
+        });
+    }
+
 </script>
 {% endblock %}
