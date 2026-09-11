@@ -211,3 +211,9 @@ def test_dashboard_learning_statistics(client, app):
     assert b"1 completed" in response.data
     assert b"2 total" in response.data
     assert b"75% average progress" in response.data
+    
+def test_dashboard_contains_learning_chart(client):
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"learningProgressChart" in response.data

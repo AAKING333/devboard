@@ -320,6 +320,11 @@ main {
 }
 
 .charts-section {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
@@ -346,7 +351,5 @@ main {
 
 .chart-container {
     position: relative;
-    height: 300px;
-    max-width: 500px;
-    margin: 0 auto;
+    height: 280px;
 }
