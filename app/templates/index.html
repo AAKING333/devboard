@@ -66,4 +66,61 @@ DashBoard | DevBaord
 
 </section>
 
+<section class="charts-section">
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+            <h3>Task Status</h3>
+            <p>Distribution of pending and completed tasks.</p>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="taskStatusChart"></canvas>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const taskChartElement = document.getElementById("taskStatusChart");
+
+    const pendingCount = Number("{{ pending_tasks }}");
+    const completedCount = Number("{{ completed_tasks }}");
+
+    new Chart(taskChartElement, {
+        type: "doughnut",
+
+        data: {
+            labels: [
+                "Pending",
+                "Completed"
+            ],
+
+            datasets: [
+                {
+                    data: [
+                        pendingCount,
+                        completedCount
+                    ]
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

@@ -329,3 +329,32 @@ def test_create_task_rejects_invalid_project(client, app):
         ).fetchone()
 
         assert task is None
+        
+def test_dashboard_contains_task_chart_data(client, app):
+    with app.app_context():
+        db = get_db()
+
+        db.execute(
+            """
+            INSERT INTO tasks (title, status)
+            VALUES (?, ?)
+            """,
+            ("Pending Chart Task", "pending"),
+        )
+
+        db.execute(
+            """
+            INSERT INTO tasks (title, status)
+            VALUES (?, ?)
+            """,
+            ("Completed Chart Task", "completed"),
+        )
+
+        db.commit()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"taskStatusChart" in response.data
+    assert b"Pending" in response.data
+    assert b"Completed" in response.data
