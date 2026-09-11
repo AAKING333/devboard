@@ -66,4 +66,179 @@ DashBoard | DevBaord
 
 </section>
 
+<section class="charts-section">
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+            <h3>Task Status</h3>
+            <p>Distribution of pending and completed tasks.</p>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="taskStatusChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+            <h3>Project Status</h3>
+            <p>Distribution of active, paused, and completed projects.</p>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="projectStatusChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+            <h3>Learning Progress</h3>
+            <p>Current learning tracker overview.</p>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="learningProgressChart"></canvas>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const taskChartElement =
+        document.getElementById("taskStatusChart");
+    const projectChartElement =
+        document.getElementById("projectStatusChart");
+     const learningChartElement =
+        document.getElementById("learningProgressChart");
+
+
+    const pendingCount = Number("{{ pending_tasks }}");
+    const completedCount = Number("{{ completed_tasks }}");
+
+    new Chart(taskChartElement, {
+        type: "doughnut",
+
+        data: {
+            labels: [
+                "Pending",
+                "Completed"
+            ],
+
+            datasets: [
+                {
+                    data: [
+                        pendingCount,
+                        completedCount
+                    ]
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+
+
+    const activeP = Number("{{ active_projects }}")
+    const pauseP = Number("{{ paused_projects }}")
+    const completeP = Number("{{ completed_projects }}")
+
+    new Chart(projectChartElement, {
+        type: "doughnut",
+
+        data: {
+            labels: [
+                "Active",
+                "Paused",
+                "Completed"
+            ],
+
+            datasets: [
+                {
+                    data: [
+                        activeP,
+                        pauseP,
+                        completeP
+                    ]
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+
+
+    const in_progress_l = Number("{{ in_progress_learning }}")
+    const completed_l = Number("{{ completed_learning }}")
+    const total_l = Number("{{ total_learning }}")
+new Chart(learningChartElement, {
+        type: "bar",
+
+        data: {
+            labels: [
+                "In Progress",
+                "Completed",
+                "Total"
+            ],
+
+            datasets: [
+                {
+                    label: "Learning Entries",
+
+                    data: [
+                        in_progress_l,
+                        completed_l,
+                        total_l
+                    ]
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

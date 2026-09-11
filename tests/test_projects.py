@@ -208,3 +208,9 @@ def test_edit_project_rejects_invalid_status(client, app):
         ).fetchone()
 
         assert project["status"] == "active"
+        
+def test_dashboard_contains_project_chart(client):
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"projectStatusChart" in response.data

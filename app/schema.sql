@@ -16,15 +16,15 @@ CREATE TABLE learning_entries (
     topic TEXT NOT NULL,
     category TEXT,
     progress INTEGER NOT NULL DEFAULT 0,
-    status TEXT NOT NULL DEFAULT 'not_started',
+    status TEXT NOT NULL DEFAULT 'not started',
     notes TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CHECK (progress >= 0 AND progress <= 100),
     CHECK (
         status IN (
-            'not_started',
-            'in_progress',
+            'not started',
+            'in progress',
             'completed'
         )
     )
