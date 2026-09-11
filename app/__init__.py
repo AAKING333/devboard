@@ -8,7 +8,10 @@ from app import database
 def create_app():
     app = Flask(__name__)
     
-    app.config["SECRET_KEY"] = "dev-secret-key"
+    app.config["SECRET_KEY"] = os.environ.get(
+        "SECRET_KEY",
+        "dev-secret-key"
+    )
 
     app.config["DATABASE"] = os.path.join(
         app.instance_path,
