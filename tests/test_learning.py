@@ -15,7 +15,7 @@ def test_create_learning_entry(client, app):
             "topic": "Flask Testing",
             "category": "Backend",
             "progress": "60",
-            "status": "in_progress",
+            "status": "in progress",
             "notes": "Learning pytest.",
         },
         follow_redirects=True,
@@ -37,7 +37,7 @@ def test_create_learning_entry(client, app):
 
         assert entry is not None
         assert entry["progress"] == 60
-        assert entry["status"] == "in_progress"
+        assert entry["status"] == "in progress"
 
 
 def test_learning_rejects_invalid_progress(client, app):
@@ -47,7 +47,7 @@ def test_learning_rejects_invalid_progress(client, app):
             "topic": "Bad Progress",
             "category": "",
             "progress": "150",
-            "status": "in_progress",
+            "status": "in progress",
             "notes": "",
         },
         follow_redirects=True,
@@ -77,7 +77,7 @@ def test_edit_learning_entry(client, app):
             INSERT INTO learning_entries (topic, category, progress, status, notes)
             VALUES (?, ?, ?, ?, ?)
             """,
-            ("Old Topic", "Testing", 10, "in_progress", "Initial notes"),
+            ("Old Topic", "Testing", 10, "in progress", "Initial notes"),
         )
         db.commit()
         entry_id = cursor.lastrowid
@@ -119,7 +119,7 @@ def test_delete_learning_entry(client, app):
             INSERT INTO learning_entries (topic, category, progress, status, notes)
             VALUES (?, ?, ?, ?, ?)
             """,
-            ("Delete Me", "Testing", 0, "not_started", "Temp"),
+            ("Delete Me", "Testing", 0, "not started", "Temp"),
         )
         db.commit()
         entry_id = cursor.lastrowid
@@ -154,7 +154,7 @@ def test_learning_entry_404(client):
             "topic": "Ghost",
             "category": "",
             "progress": "50",
-            "status": "in_progress",
+            "status": "in progress",
             "notes": "",
         },
     )
@@ -190,7 +190,7 @@ def test_dashboard_learning_statistics(client, app):
             (topic, progress, status)
             VALUES (?, ?, ?)
             """,
-            ("Flask", 50, "in_progress"),
+            ("Flask", 50, "in progress"),
         )
 
         db.execute(

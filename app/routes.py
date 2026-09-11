@@ -73,7 +73,7 @@ def home():
         """
         SELECT COUNT(*)
         FROM learning_entries
-        WHERE status = 'in_progress'
+        WHERE status = 'in progress'
         """
     ).fetchone()[0]
 
@@ -463,15 +463,15 @@ def create_learning_entry():
             flash("Progress must be between 0 and 100.", "error")
 
         elif status not in {
-            "not_started",
-            "in_progress",
+            "not started",
+            "in progress",
             "completed",
         }:
             flash("Invalid learning status.", "error")
         
         elif status == "completed" and progress != 100:
             flash("Completed entries must have 100% progress.", "error")
-        elif status == "not_started" and progress != 0:
+        elif status == "not started" and progress != 0:
             flash("Not started entries must have 0% progress.", "error")
 
         else:
@@ -542,8 +542,8 @@ def edit_learning_entry(entry_id):
             flash("Progress must be between 0 and 100.", "error")
 
         elif status not in {
-            "not_started",
-            "in_progress",
+            "not started",
+            "in progress",
             "completed",
         }:
             flash("Invalid learning status.", "error")
@@ -551,7 +551,7 @@ def edit_learning_entry(entry_id):
         elif status == "completed" and progress != 100:
             flash("Completed entries must have 100% progress.", "error")
 
-        elif status == "not_started" and progress != 0:
+        elif status == "not started" and progress != 0:
             flash("Not started entries must have 0% progress.", "error")
 
         else:
