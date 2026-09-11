@@ -2,6 +2,20 @@
 
 DevBoard is a personal developer dashboard built with Flask that helps developers organize projects, manage tasks, track learning progress, and maintain technical notes from a single interface.
 
+## Screenshots
+
+### Dashboard
+
+![DevBoard Dashboard](docs/screenshots/dashboard.png)
+
+### Task Management
+
+![DevBoard Task Management](docs/screenshots/tasks.png)
+
+### Learning Tracker
+
+![DevBoard Learning Tracker](docs/screenshots/learning.png)
+
 ## Features
 
 ### Dashboard
